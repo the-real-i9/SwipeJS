@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-continue */
 /* eslint-disable camelcase */
 const $_SwipeJS = (element) => ((elem) => {
@@ -176,10 +177,10 @@ const $_SwipeJS = (element) => ((elem) => {
             } catch (e) {
                 console.error(e);
             }
-            elem.addEventListener('touchend', async () => {
+            for (;;) {
                 const swipeVal = await swipeValue();
                 if (swipeType === swipeVal) callback("Let me know why you'll need an event argument on GitHub");
-            });
+            }
         },
     };
 })(element);
