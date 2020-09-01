@@ -183,7 +183,3 @@ const $_SwipeJS = (element) => ((elem) => {
         },
     };
 })(element);
-
-$_SwipeJS(document).addSwipeListener('swiperight', (ev) => {
-    console.log('Yaay it works!!!');
-});
