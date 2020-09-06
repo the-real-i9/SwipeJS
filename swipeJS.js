@@ -59,6 +59,7 @@ const $_SwipeJS = (element) => ((elem) => {
             };
 
             const swipeTosWithoutZeros = {};
+            const finalSwipeTos = {};
             const swipeBys = {};
 
             for (const prop in swipeTos) {
@@ -66,28 +67,54 @@ const $_SwipeJS = (element) => ((elem) => {
                 swipeTosWithoutZeros[prop] = swipeTos[prop];
             }
 
+            // filter if more than two
+            const Xs = Object.keys(swipeTosWithoutZeros).filter((v) => v.endsWith('X'));
+            const Ys = Object.keys(swipeTosWithoutZeros).filter((v) => v.endsWith('Y'));
+            const twoSameCoord = [Xs, Ys].filter((arr) => arr.length === 2)[0];
+            const getOneToRemove = (arr) => {
+                const first = swipeTosWithoutZeros[arr[0]];
+                const second = swipeTosWithoutZeros[arr[1]];
+                const min = Math.min(first, second);
+                if (min === first) {
+                    return arr[0];
+                }
+                return arr[1];
+            };
+
+            let oneToRemove = '';
+
+
+            if (twoSameCoord) {
+                oneToRemove = getOneToRemove(twoSameCoord);
+            }
 
             for (const prop in swipeTosWithoutZeros) {
+                if (prop === oneToRemove) continue;
+                // if (prop === oneToRemoveY) continue;
+                finalSwipeTos[prop] = swipeTosWithoutZeros[prop];
+            }
+
+            for (const prop in finalSwipeTos) {
                 if (prop.endsWith('X') && prop.includes('Pos')) {
-                    swipeBys[`${prop}By`] = swipeTosWithoutZeros[prop] - touchStartX;
+                    swipeBys[`${prop}By`] = finalSwipeTos[prop] - touchStartX;
                 } else if (prop.endsWith('Y') && prop.includes('Pos')) {
-                    swipeBys[`${prop}By`] = swipeTosWithoutZeros[prop] - touchStartY;
+                    swipeBys[`${prop}By`] = finalSwipeTos[prop] - touchStartY;
                 } else if (prop.endsWith('X') && prop.includes('Neg')) {
-                    swipeBys[`${prop}By`] = touchStartX - swipeTosWithoutZeros[prop];
+                    swipeBys[`${prop}By`] = touchStartX - finalSwipeTos[prop];
                 } else if (prop.endsWith('Y') && prop.includes('Neg')) {
-                    swipeBys[`${prop}By`] = touchStartY - swipeTosWithoutZeros[prop];
+                    swipeBys[`${prop}By`] = touchStartY - finalSwipeTos[prop];
                 }
             }
 
             const getMax = (obj) => {
-                const [key1, key2] = Object.keys(obj);
-                const first = obj[key1];
-                const second = obj[key2];
+                const keys = Object.keys(obj);
+                const first = obj[keys[0]];
+                const second = obj[keys[1]];
                 const maxVal = Math.max(first, second);
                 if (maxVal === first) {
-                    return key1;
+                    return keys[0];
                 }
-                return key2;
+                return keys[1];
             };
             resetAll();
 
@@ -107,7 +134,7 @@ const $_SwipeJS = (element) => ((elem) => {
                     default:
                 }
             } else if (Object.keys(swipeBys).length === 1) {
-                const prop = Object.keys(swipeBys).toString();
+                const prop = Object.keys(swipeBys)[0];
                 // console.log(prop);
                 switch (prop) {
                     case 'swipePosXBy':
